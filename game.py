@@ -16,7 +16,7 @@ class Game():
         self.pet = Pet("Bob", (SCREEN_WIDTH // 2, (SCREEN_HEIGHT // 2) + 20))
         self.bg_color = (247, 239, 218)
 
-    def update(self):
+    def run(self):
         running = True
         while running:
             dt = self.clock.tick(FPS) / 1000
@@ -32,4 +32,4 @@ class Game():
         pygame.quit()
 
 if __name__ == "__main__":
-    Game().update()
+    Game().run()
