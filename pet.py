@@ -10,6 +10,7 @@ class Pet():
         self.max_hunger = 1
         self.hunger = self.max_hunger
 
+        # Happiness Variable
         self.max_happiness = 1
         self.happiness = self.max_happiness
 
