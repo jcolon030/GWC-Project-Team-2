@@ -6,6 +6,7 @@ class Pet():
         self.name = name
         self.pos = pygame.Vector2(pos)
 
+        # Hunger Variable
         self.max_hunger = 1
         self.hunger = self.max_hunger
 
