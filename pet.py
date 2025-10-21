@@ -5,10 +5,13 @@ class Pet():
     def __init__(self, name, pos):
         self.name = name
         self.pos = pygame.Vector2(pos)
+
         self.max_hunger = 1
         self.hunger = self.max_hunger
+
         self.max_happiness = 1
         self.happiness = self.max_happiness
+
         self.decay_rate = 0.02
 
     def update(self, dt):
@@ -37,7 +40,7 @@ class Pet():
         pygame.draw.circle(s, eye, (160,120), 8)
 
         cx, cy = 125, 155
-        pygame.draw.arc(s, eye, (cx-20, cy-8, 40, 24), math.radians(20),  math.radians(160), 3)
+        pygame.draw.arc(s, eye, (cx-20, cy-8, 40, 24), math.radians(160),  math.radians(20), 3)
 
         # Center the pet sprite onto the main screen
         rect = s.get_rect(center=self.pos)
