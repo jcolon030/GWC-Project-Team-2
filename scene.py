@@ -8,7 +8,7 @@ SCREEN_HEIGHT = 480
 class Scene:
     def __init__(self, game):
         self.game = game
-        self.screen: pygame.Surface = game.screen
+        self.screen = game.screen
         self.font = game.font
         self.small_font = game.small_font
         self.title_font = game.title_font

@@ -15,7 +15,8 @@ ITEMS = [APPLE, COOKIE]  # order in the hotbar
 class Inventory:
     def __init__(self):
         # starting amounts (tweak as you like)
-        self.counts = {APPLE.name: 3, COOKIE.name: 5}
+        self.counts = {APPLE.name: 3, 
+                       COOKIE.name: 5}
 
     def count(self, item: ItemDef) -> int:
         return self.counts.get(item.name, 0)
@@ -26,7 +27,7 @@ class Inventory:
     def consume(self, item: ItemDef) -> bool:
         """Use 1 of the item. Returns True if success."""
         c = self.count(item)
-        if c > 0:
+        if self.can_take(item):
             self.counts[item.name] = c - 1
             return True
         return False
