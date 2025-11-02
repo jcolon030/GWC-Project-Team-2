@@ -44,12 +44,9 @@ class LivingRoomScene(Scene):
         super().__init__(game)
         self.bg_color = (247, 239, 218)
 
-        # --- inventory ---
-        self.inv = Inventory()
-
         # --- UI ---
         self.hotbar = Hotbar(
-            inventory=self.inv,
+            inventory=self.game.inv,
             items=ITEMS,
             origin=(20, SCREEN_HEIGHT - 64),
             slot_w=85, slot_h=44, pad=10,
@@ -110,3 +107,109 @@ class BathroomScene(Scene):
         self.game.pet.draw(screen)
         self._draw_title_right("Bathroom")
         self._draw_hint_right("Press L = Living Room, B = Bathroom")
+
+class StoreScene(Scene):
+    def __init__(self, game):
+        super().__init__(game)
+        self.bg_color = (255, 237, 232)
+        self.card_w, self.card_h = 160, 78
+        self.pad = 14
+        self.origin = (36, 320)
+        self.cols = 3
+        self.cards = []
+        self.build_grid()
+        self.stock = {it.name: 4 for it in ITEMS}
+        self.hover_i = None
+
+    def build_grid(self):
+        self.cards.clear()
+        x0, y0 = self.origin
+        for i, card in enumerate(self.cards):
+            r = i // self.cols
+            c = i % self.cols
+            x = x0 + c * (self.card_w + self.pad)
+            y = y0 + r * (self.card_h + self.pad)
+            rect = pygame.Rect(x, y, self.card_w, self.card_h)
+            self.cards.append((rect, card))
+    
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEMOTION:
+            mx, my = event.pos
+            self.hover_i = None
+            for i, (rect, _) in enumerate (self.cards):
+                if rect.collidepoint((mx,my)):
+                    self.hover_i = i
+                    break
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.hover_i is not None:
+                _, item = self.cards[self.hover_i]
+                if self.stock.get(item.name) <= 0:
+                    print("Out of Stock")
+                    return
+                if not self.game.wallet.can_afford(item.price):
+                    print("Not enough money!")
+                    return
+                if self.game.wallet.spend(item.price):
+                    self.game.inv.give(item, 1)
+                    self.stock[item.name] = self.stock.get(item.name) - 1
+                    print("Purchased!")
+
+    def update(self, dt: float):
+        self.game.pet.update(dt)
+
+    def draw(self, screen: pygame.Surface):
+        screen.fill(self.bg_color)
+
+        # simple storefront shelving using shapes
+        self._draw_shelves(screen)
+
+        # cards
+        self._draw_cards(screen)
+
+        # scene HUD
+        self._draw_title_right("Shop")
+        self._draw_hint_right("Click a card to buy • Press L = Living, B = Bath")
+
+    # ---------- helpers ----------
+    def _draw_shelves(self, screen):
+        # 3 horizontal shelves (rounded rectangles)
+        shelf_col = (220, 230, 245)
+        edge_col  = (70, 90, 130)
+        y = self.origin[1] - 18
+        for _ in range(2):
+            shelf = pygame.Rect(20, y, SCREEN_WIDTH - 40, 10)
+            pygame.draw.rect(screen, shelf_col, shelf, border_radius=6)
+            pygame.draw.rect(screen, edge_col, shelf, width=2, border_radius=6)
+            y += self.card_h + self.pad
+
+    def _draw_cards(self, screen):
+        for i, (rect, item) in enumerate(self.cards):
+            stock = self.stock.get(item.name, 0)
+            is_hover = (i == self._hover_i)
+
+            card_rect = rect.inflate(8, 6) if is_hover else rect
+            bg_col = (245, 248, 255) if stock > 0 else (234, 236, 240)
+
+            # card background + border
+            pygame.draw.rect(screen, bg_col, card_rect, border_radius=10)
+            pygame.draw.rect(screen, (70, 90, 130), card_rect, width=2, border_radius=10)
+
+            # color swatch “product”
+            sw = pygame.Rect(card_rect.x + 10, card_rect.y + 12, 28, 28)
+            pygame.draw.rect(screen, item.color, sw, border_radius=6)
+            pygame.draw.rect(screen, (60, 60, 80), sw, width=2, border_radius=6)
+
+            # name / price / stock
+            name_lbl  = self.font.render(item.name, True, (30,40,70))
+            price_lbl = self.small_font.render(f"🪙 {item.price}", True, (40,60,90))
+            stock_lbl = self.small_font.render(f"Stock: {stock}", True, (50,60,90))
+
+            screen.blit(name_lbl,  (card_rect.x + 48, card_rect.y + 8))
+            screen.blit(price_lbl, (card_rect.x + 48, card_rect.y + 30))
+            screen.blit(stock_lbl, (card_rect.x + 48, card_rect.y + 48))
+
+            # gray overlay if out-of-stock
+            if stock <= 0:
+                overlay = pygame.Surface((card_rect.w, card_rect.h), pygame.SRCALPHA)
+                overlay.fill((0,0,0,50))
+                screen.blit(overlay, card_rect.topleft)

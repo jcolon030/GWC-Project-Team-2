@@ -6,10 +6,11 @@ class ItemDef:
     name: str
     nutrition: float   # how much hunger to restore (0..1)
     color: tuple       # used for the slot swatch
+    price: int
 
-APPLE  = ItemDef("Apple",  0.20, (250,120,120))
-COOKIE = ItemDef("Cookie", 0.12, (230,190,120))
-PIZZA  = ItemDef("Pizza", 0.3,   (255,180,180))
+APPLE  = ItemDef("Apple",  0.20, (250,120,120), 1)
+COOKIE = ItemDef("Cookie", 0.12, (230,190,120), 2)
+PIZZA  = ItemDef("Pizza", 0.3,   (255,180,180), 3)
 
 ITEMS = [APPLE, COOKIE, PIZZA]  # order in the hotbar 
 
@@ -33,3 +34,5 @@ class Inventory:
             self.counts[item.name] = c - 1
             return True
         return False
+    def give(self, item: ItemDef, n):
+        self.counts[item.name] = self.count(item) + n

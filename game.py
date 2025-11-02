@@ -1,7 +1,8 @@
 import pygame
 from pet import Pet
-from scene import Scene, LivingRoomScene, BathroomScene  # <-- import scenes
+from scene import Scene, LivingRoomScene, BathroomScene,  StoreScene  # <-- import scenes
 from wallet import Wallet
+from inventory import Inventory
 
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 480
@@ -23,10 +24,14 @@ class Game():
         self.pet = Pet("Bob", (SCREEN_WIDTH // 2, (SCREEN_HEIGHT // 2) + 20))
         self.wallet = Wallet()
 
+        # --- inventory ---
+        self.inv = Inventory()
+
         # Scene manager
         self.scenes = {
             "living": LivingRoomScene(self),
             "bathroom": BathroomScene(self),
+            "store": StoreScene(self),
         }
 
         self.current = self.scenes["living"] # self.current is a Scene class
@@ -57,6 +62,8 @@ class Game():
                         self.change_scene("bathroom")
                     elif event.key == pygame.K_l:
                         self.change_scene("living")
+                    elif event.key == pygame.K_s:
+                        self.change_scene("store")
 
                 # pass all events to active scene (room-specific input later)
                 self.current.handle_event(event)
