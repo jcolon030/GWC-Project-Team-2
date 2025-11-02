@@ -1,6 +1,7 @@
 import pygame
 from pet import Pet
 from scene import Scene, LivingRoomScene, BathroomScene  # <-- import scenes
+from wallet import Wallet
 
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 480
@@ -20,6 +21,7 @@ class Game():
 
         # Shared pet (scenes will update/draw this)
         self.pet = Pet("Bob", (SCREEN_WIDTH // 2, (SCREEN_HEIGHT // 2) + 20))
+        self.wallet = Wallet()
 
         # Scene manager
         self.scenes = {
@@ -59,6 +61,9 @@ class Game():
                 # pass all events to active scene (room-specific input later)
                 self.current.handle_event(event)
 
+            # Update our Wallet
+            self.wallet.update(dt)
+
             # --- UPDATE & DRAW via SCENE ---
             # Let the scene update the pet and draw the room + pet
             self.current.update(dt)
@@ -67,6 +72,9 @@ class Game():
             # --- GLOBAL OVERLAYS (draw AFTER scene so they sit on top) ---
             self.draw_bar(40, 40, 200, 20, self.pet.hunger, "Hunger", (255, 100, 100))
             self.draw_bar(40, 100, 200, 20, self.pet.happiness, "Happiness", (100, 180, 255))
+
+            # Draw Wallet
+            self._draw_coin_hud()
 
             pygame.display.flip()
 
@@ -85,6 +93,10 @@ class Game():
         # label
         text = self.font.render(f"{label}: {int(value * 100)}%", True, (30, 30, 50))
         self.screen.blit(text, (x, y - 22)) # Renders text to screen
+
+    def _draw_coin_hud(self, x=40, y=140):
+        label = self.font.render(f"Coins: {self.wallet.coins}", True, (30,30,50))
+        self.screen.blit(label, (x, y))
 
 if __name__ == "__main__":
     Game().run()

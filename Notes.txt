@@ -1,1 +1,4 @@
-fhseifsebfisdsadas
+snacks = ['apple', 'cookie', 'pizza']
+
+snacks[0] = 'apple'
+snacks[1] = 'cookie'
