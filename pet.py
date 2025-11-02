@@ -14,7 +14,7 @@ class Pet():
         self.max_happiness = 1
         self.happiness = self.max_happiness
 
-        self.decay_rate = 0.02
+        self.decay_rate = 0.1
 
     def update(self, dt):
         self.hunger = self.hunger - ((self.decay_rate / 60) * dt)
@@ -47,6 +47,11 @@ class Pet():
         # Center the pet sprite onto the main screen
         rect = s.get_rect(center=self.pos)
         screen.blit(s, rect)
+
+    # inside class Pet
+    def feed(self, amount: float):
+        self.hunger = min(1.0, self.hunger + float(amount))
+
 
     
 
