@@ -2,6 +2,7 @@
 import pygame
 from inventory import Inventory, ITEMS, ItemDef
 from ui import Hotbar
+from toys import Ball
 
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 480
@@ -46,6 +47,9 @@ class LivingRoomScene(Scene):
 
         # --- inventory ---
         self.inv = Inventory()
+        self.toys = []
+
+
 
         # --- UI ---
         self.hotbar = Hotbar(
@@ -66,8 +70,14 @@ class LivingRoomScene(Scene):
         self._hover_i = None  # which slot is hovered
 
     def _on_click_item(self, item):
+        if item.kind == "toy":
+            if self.inv.consume(item):
+                if item.name == "Ball":
+                    x = 260 + 40 * (len(self.toys)%5)
+                self.toys.append(Ball(item,(x, 360), 20))
+                
         if item.kind == "food":
-            if self.game.inv.consume(item):
+            if self.inv.consume(item):
                 if item.name == "Cookie":
                     self.game.pet.happiness = min(1.0, self.game.pet.happiness + 0.05)
                 self.game.pet.feed(item.nutrition)
@@ -75,10 +85,15 @@ class LivingRoomScene(Scene):
     # ---------- input ----------
     def handle_event(self, event):
         self.hotbar.handle_event(event)
+        for t in self.toys:
+            t.handle_event(event)
 
     # ---------- logic ----------
     def update(self, dt: float):
         self.game.pet.update(dt)
+        for t in self.toys:
+            t.update(dt)
+            t.play(self.game.pet)
 
     # ---------- drawing ----------
     def draw(self, screen: pygame.Surface):
@@ -91,6 +106,9 @@ class LivingRoomScene(Scene):
         # right-aligned labels
         self._draw_title_right("Living Room")
         self._draw_hint_right("Click an item to feed the pet")
+
+        for t in self.toys:
+            t.draw(screen)
 
 
 class BathroomScene(Scene):

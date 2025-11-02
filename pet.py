@@ -51,6 +51,7 @@ class Pet():
     # inside class Pet
     def feed(self, amount: float):
         self.hunger = min(1.0, self.hunger + float(amount))
+    
 
 
     
