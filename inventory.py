@@ -9,14 +9,16 @@ class ItemDef:
 
 APPLE  = ItemDef("Apple",  0.20, (250,120,120))
 COOKIE = ItemDef("Cookie", 0.12, (230,190,120))
+PIZZA  = ItemDef("Pizza", 0.3,   (255,180,180))
 
-ITEMS = [APPLE, COOKIE]  # order in the hotbar
+ITEMS = [APPLE, COOKIE, PIZZA]  # order in the hotbar
 
 class Inventory:
     def __init__(self):
         # starting amounts (tweak as you like)
         self.counts = {APPLE.name: 3, 
-                       COOKIE.name: 5}
+                       COOKIE.name: 5,
+                       PIZZA.name: 2}
 
     def count(self, item: ItemDef) -> int:
         return self.counts.get(item.name, 0)

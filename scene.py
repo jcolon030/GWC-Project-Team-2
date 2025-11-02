@@ -43,7 +43,7 @@ class LivingRoomScene(Scene):
 
         self._slots = [] # Should include list[tuple[pygame.Rect, ItemDef]]
         self._rebuild_slots()
-        self._hover_i: int | None = None  # which slot is hovered
+        self._hover_i = None  # which slot is hovered
 
     # ---------- input ----------
     def handle_event(self, event):
@@ -95,7 +95,7 @@ class LivingRoomScene(Scene):
             self._slots.append((rect, item))
 
     def _draw_hotbar(self, screen: pygame.Surface):
-        # background strip (optional)
+        # background strip 
         total_w = len(ITEMS)*(self.slot_w+self.slot_pad) - self.slot_pad
         strip = pygame.Rect(self.hotbar_origin[0]-10, self.hotbar_origin[1]-8,
                             total_w+20, self.slot_h+16)
@@ -108,7 +108,7 @@ class LivingRoomScene(Scene):
 
             # if out of stock, tint background
             has_any = self.inv.count(item) > 0
-            base_col = (245,245,250) if has_any else (230,230,235)
+            base_col = (245,245,250) if has_any else (230,230,235) # Checks if inventory item is still in stock
 
             pygame.draw.rect(screen, base_col, draw_rect, border_radius=8)
             pygame.draw.rect(screen, (70,90,130), draw_rect, width=2, border_radius=8)
@@ -125,7 +125,7 @@ class LivingRoomScene(Scene):
             count_txt = self.small_font.render(f"x{cnt}", True, (30,40,70))
             screen.blit(count_txt, (draw_rect.x+34, draw_rect.y+22))
 
-            # out-of-stock overlay (light hatch)
+            # out-of-stock overlay (tints the screen)
             if not has_any:
                 overlay = pygame.Surface((draw_rect.w, draw_rect.h), pygame.SRCALPHA)
                 overlay.fill((0,0,0,40))
