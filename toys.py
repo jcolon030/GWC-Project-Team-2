@@ -8,6 +8,9 @@ class Ball:
         self.vy = 0.0
         self.bouncing = False
 
+        self.image = pygame.image.load("assets/ball-1.png.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image, (40,40))
+
         # Track pending happiness reward
         self._happy_pending = False
         self._happy_boost = 0.003  # small boost per click (~0.3%)
@@ -40,5 +43,8 @@ class Ball:
             self._happy_pending = False
 
     def draw(self, screen):
-        pygame.draw.circle(screen, self.item.color, (int(self.pos.x), int(self.pos.y)), self.radius)
-        pygame.draw.circle(screen, (60, 60, 80), (int(self.pos.x), int(self.pos.y)), self.radius, 2)
+        #pygame.draw.circle(screen, self.item.color, (int(self.pos.x), int(self.pos.y)), self.radius)
+        #pygame.draw.circle(screen, (60, 60, 80), (int(self.pos.x), int(self.pos.y)), self.radius, 2)
+
+        rect = self.image.get_rect(center=(int(self.pos.x), int(self.pos.y)))
+        screen.blit(self.image, rect)
