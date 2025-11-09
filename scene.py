@@ -39,6 +39,24 @@ class Scene:
         rect = lbl.get_rect(topright=(SCREEN_WIDTH - x_margin, y))
         self.screen.blit(lbl, rect)
 
+    # Used for drawing hunger and happiness
+    def draw_bar(self, x, y, w, h, value, label, color):
+        value = max(0, min(1, value))
+        bg_rect = pygame.Rect(x, y, w, h)
+        inner_rect = pygame.Rect(x + 3, y + 3, int((w - 6) * value), h - 6)
+
+        # Draws rectangles to the screen
+        pygame.draw.rect(self.game.screen, (60, 60, 80), bg_rect, 2, border_radius=6) # border
+        pygame.draw.rect(self.game.screen, color, inner_rect, border_radius=6) # fill
+
+        # label
+        text = self.font.render(f"{label}: {int(value * 100)}%", True, (30, 30, 50))
+        self.screen.blit(text, (x, y - 22)) # Renders text to screen
+
+    def _draw_coin_hud(self, x=40, y=140):
+        label = self.font.render(f"Coins: {self.game.wallet.coins}", True, (30,30,50))
+        self.screen.blit(label, (x, y))
+
 
 class LivingRoomScene(Scene):
     def __init__(self, game):
@@ -71,12 +89,15 @@ class LivingRoomScene(Scene):
 
     def handle_event(self, event):
         self.hotbar.handle_event(event)
-        # Toys can be bounced
+
+        # Handle specific toy events (ex. bouncing)
         for t in self.toys:
             t.handle_event(event)
 
     def update(self, dt):
         super().update(dt)
+
+        # Updates active toys
         for t in self.toys:
             t.update(dt)
             t.resolve_rewards(self.game.pet) 
@@ -85,10 +106,16 @@ class LivingRoomScene(Scene):
         screen.fill(self.bg_color)
         self.draw_shadow()
         self.game.pet.draw(screen)
+        
+        # UI
         self.hotbar.draw()
         self._draw_title_right("Living Room")
         self._draw_hint_right("Click an item to feed the pet")
+        self.draw_bar(40, 40, 200, 20, self.game.pet.hunger, "Hunger", (255, 100, 100))
+        self.draw_bar(40, 100, 200, 20, self.game.pet.happiness, "Happiness", (100, 180, 255))
+        self._draw_coin_hud()
 
+        # For Drawing Active Toys
         for t in self.toys:
             t.draw(screen)
 
@@ -155,6 +182,9 @@ class BathroomScene(Scene):
         self._draw_title_right("Bathroom")
         self._draw_hint_right("Toggle the Shower button to spray")
         self._draw_shower_button(screen)
+        self.draw_bar(40, 40, 200, 20, self.game.pet.hunger, "Hunger", (255, 100, 100))
+        self.draw_bar(40, 100, 200, 20, self.game.pet.happiness, "Happiness", (100, 180, 255))
+        self._draw_coin_hud()
 
     # ---------- droplets ----------
     def _spawn_droplet(self):
@@ -279,6 +309,9 @@ class SupermarketScene(Scene):
         # scene HUD
         self._draw_title_right("Shop")
         self._draw_hint_right("Click a card to buy • Press L = Living, B = Bath")
+        self.draw_bar(40, 40, 200, 20, self.game.pet.hunger, "Hunger", (255, 100, 100))
+        self.draw_bar(40, 100, 200, 20, self.game.pet.happiness, "Happiness", (100, 180, 255))
+        self._draw_coin_hud()
 
         # tiny flash feedback near bottom
         if self._flash_text:
@@ -334,3 +367,22 @@ class SupermarketScene(Scene):
         self._flash_text = text
         self._flash_timer = seconds
         self._flash_color = color
+
+class TitleScene(Scene):
+    def __init__(self, game):
+        super().__init__(game)
+        self.bg = pygame.image.load("assets/ball-1.png.png").convert()
+        self.bg = pygame.transform.scale(self.bg, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.title_font = pygame.font.SysFont(None, 72)
+        self.button = pygame.Rect(280, 340, 160, 60)
+    def draw(self, screen):
+        screen.blit(self.bg, (0,0))
+        lbl = self.title_font.render("Virtual Pet", True, (50,60,80))
+        screen.blit(lbl, (180, 140))
+        pygame.draw.rect(screen, (180,200,240), self.button, border_radius=12)
+        pygame.draw.rect(screen, (60,70,100), self.button, 2, border_radius=12)
+        txt = self.font.render("Start", True, (30,40,70))
+        screen.blit(txt, txt.get_rect(center=self.button.center))
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and self.button.collidepoint(event.pos):
+            self.game.change_scene("living")

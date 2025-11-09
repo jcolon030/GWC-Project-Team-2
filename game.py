@@ -1,6 +1,6 @@
 import pygame
 from pet import Pet
-from scene import Scene, LivingRoomScene, BathroomScene, SupermarketScene  # <-- import scenes
+from scene import Scene, LivingRoomScene, BathroomScene, SupermarketScene, TitleScene  # <-- import scenes
 from wallet import Wallet
 from inventory import Inventory
 
@@ -31,10 +31,11 @@ class Game():
         self.scenes = {
             "living": LivingRoomScene(self),
             "bathroom": BathroomScene(self),
-            "shop" : SupermarketScene(self)
+            "shop" : SupermarketScene(self),
+            "title" : TitleScene(self)
         }
 
-        self.current = self.scenes["living"] # self.current is a Scene class
+        self.current = self.scenes["title"] # self.current is a Scene class
 
     def change_scene(self, name):
         if name in self.scenes:
@@ -78,33 +79,15 @@ class Game():
             self.current.draw(self.screen)
 
             # --- GLOBAL OVERLAYS (draw AFTER scene so they sit on top) ---
-            self.draw_bar(40, 40, 200, 20, self.pet.hunger, "Hunger", (255, 100, 100))
-            self.draw_bar(40, 100, 200, 20, self.pet.happiness, "Happiness", (100, 180, 255))
+            #self.draw_bar(40, 40, 200, 20, self.pet.hunger, "Hunger", (255, 100, 100))
+            #self.draw_bar(40, 100, 200, 20, self.pet.happiness, "Happiness", (100, 180, 255))
 
             # Draw Wallet
-            self._draw_coin_hud()
+            #self._draw_coin_hud()
 
             pygame.display.flip()
 
         pygame.quit()
-
-    # ---------- Helpers ----------
-    def draw_bar(self, x, y, w, h, value, label, color):
-        value = max(0, min(1, value))
-        bg_rect = pygame.Rect(x, y, w, h)
-        inner_rect = pygame.Rect(x + 3, y + 3, int((w - 6) * value), h - 6)
-
-        # Draws rectangles to the screen
-        pygame.draw.rect(self.screen, (60, 60, 80), bg_rect, 2, border_radius=6) # border
-        pygame.draw.rect(self.screen, color, inner_rect, border_radius=6) # fill
-
-        # label
-        text = self.font.render(f"{label}: {int(value * 100)}%", True, (30, 30, 50))
-        self.screen.blit(text, (x, y - 22)) # Renders text to screen
-
-    def _draw_coin_hud(self, x=40, y=140):
-        label = self.font.render(f"Coins: {self.wallet.coins}", True, (30,30,50))
-        self.screen.blit(label, (x, y))
 
 if __name__ == "__main__":
     Game().run()
