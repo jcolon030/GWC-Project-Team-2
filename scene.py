@@ -201,7 +201,7 @@ class SupermarketScene(Scene):
         # grid layout
         self.card_w, self.card_h = 160, 78
         self.pad = 14
-        self.origin = (36, 320)
+        self.origin = (36, 280)
         self.cols = 3
 
         # build static card rects
