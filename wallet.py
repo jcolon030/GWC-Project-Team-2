@@ -1,8 +1,8 @@
 class Wallet:
     def __init__(self, start_coins: int = 10, income_every: float = 5.0, income_amount: int = 1):
-        self.coins = int(start_coins)
-        self.income_every = float(income_every)
-        self.income_amount = int(income_amount)
+        self.coins = start_coins
+        self.income_every = income_every
+        self.income_amount = income_amount
         self._timer = 0.0
 
     def can_afford(self, cost):

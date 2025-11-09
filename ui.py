@@ -24,7 +24,7 @@ class Hotbar:
         self.screen = screen
         self.on_click_item = on_click_item
 
-        self._slots = [] # contains tuple[pygame.Rect, object]
+        self._slots = [] # contains tuple[pygame.Rect, ItemDef] == [(Rect, APPLE), (Rect, PIZZA), (Rect, BALL)]
         self._hover_i = None
         self._rebuild_slots()
 
@@ -33,14 +33,14 @@ class Hotbar:
         if event.type == pygame.MOUSEMOTION:
             mx, my = event.pos
             self._hover_i = None
-            for i, (rect, _) in enumerate(self._slots):
+            for i, (rect, _) in enumerate(self._slots): # 0, (Rect, APPLE)
                 if rect.collidepoint((mx, my)):
                     self._hover_i = i
                     break
 
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self._hover_i is not None and self.on_click_item:
-                _, item = self._slots[self._hover_i]
+                _, item = self._slots[self._hover_i] # self._slots = []; self._slots[0]
                 if self.inv.count(item) > 0:
                     # Let caller decide what to do when clicking the item
                     self.on_click_item(item)
@@ -53,7 +53,7 @@ class Hotbar:
         pygame.draw.rect(self.screen, (238, 240, 245), strip, border_radius=10)
         pygame.draw.rect(self.screen, (70, 90, 130), strip, width=2, border_radius=10)
 
-        for i, (rect, item) in enumerate(self._slots):
+        for i, (rect, item) in enumerate(self._slots): # 1, (Rect, APPLE)   2, (Rect, BANANA)
             draw_rect = rect.inflate(8, 6) if i == self._hover_i else rect
             has_any = self.inv.count(item) > 0
             base_col = (245, 245, 250) if has_any else (230, 230, 235)
@@ -81,7 +81,7 @@ class Hotbar:
     def _rebuild_slots(self):
         self._slots.clear()
         x0, y0 = self.origin
-        for i, item in enumerate(self.items):
+        for i, item in enumerate(self.items): # 0, APPLE  1, BANANA 2, PIZZA 3, BALL
             x = x0 + i * (self.slot_w + self.pad)
             rect = pygame.Rect(x, y0, self.slot_w, self.slot_h)
             self._slots.append((rect, item))

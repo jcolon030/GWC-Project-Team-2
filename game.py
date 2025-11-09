@@ -25,7 +25,7 @@ class Game():
 
         # Shared Inventory and Wallet
         self.inv = Inventory()
-        self.wallet = Wallet( start_coins=10, income_every=6.0, income_amount=1 )
+        self.wallet = Wallet( start_coins=10, income_every=5.0, income_amount=1 )
 
         # Scene manager
         self.scenes = {

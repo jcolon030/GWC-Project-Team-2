@@ -57,10 +57,10 @@ class Scene:
         label = self.font.render(f"Coins: {self.game.wallet.coins}", True, (30,30,50))
         self.screen.blit(label, (x, y))
 
-
 class LivingRoomScene(Scene):
     def __init__(self, game):
         super().__init__(game)
+    
         self.bg_color = (247, 239, 218)
 
         self.toys = [] # should hold toy objects
@@ -74,12 +74,12 @@ class LivingRoomScene(Scene):
             on_click_item=self._on_click_item
         )
 
-    def _on_click_item(self, item):
+    def _on_click_item(self, item: ItemDef):
         if item.kind == "food":
             if self.game.inv.consume(item):
                 if item.name == "Cookie":
                     self.game.pet.happiness = min(1.0, self.game.pet.happiness + 0.05)
-                self.game.pet.feed(item.nutrition)
+                self.game.pet.feed(item.nutrition) # APPLE.nutrition = 0.02
 
         elif item.kind == "toy":
             if self.game.inv.consume(item):
