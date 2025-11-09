@@ -1,6 +1,8 @@
 import pygame
 from pet import Pet
-from scene import Scene, LivingRoomScene, BathroomScene  # <-- import scenes
+from scene import Scene, LivingRoomScene, BathroomScene, SupermarketScene  # <-- import scenes
+from wallet import Wallet
+from inventory import Inventory
 
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 480
@@ -21,10 +23,15 @@ class Game():
         # Shared pet (scenes will update/draw this)
         self.pet = Pet("Bob", (SCREEN_WIDTH // 2, (SCREEN_HEIGHT // 2) + 20))
 
+        # Shared Inventory and Wallet
+        self.inv = Inventory()
+        self.wallet = Wallet( start_coins=10, income_every=6.0, income_amount=1 )
+
         # Scene manager
         self.scenes = {
             "living": LivingRoomScene(self),
             "bathroom": BathroomScene(self),
+            "shop" : SupermarketScene(self)
         }
 
         self.current = self.scenes["living"] # self.current is a Scene class
@@ -55,9 +62,15 @@ class Game():
                         self.change_scene("bathroom")
                     elif event.key == pygame.K_l:
                         self.change_scene("living")
+                    elif event.key == pygame.K_s:
+                        self.change_scene("shop")
 
                 # pass all events to active scene (room-specific input later)
                 self.current.handle_event(event)
+
+            # Update each object
+            self.pet.update(dt)
+            self.wallet.update(dt)
 
             # --- UPDATE & DRAW via SCENE ---
             # Let the scene update the pet and draw the room + pet
@@ -67,6 +80,9 @@ class Game():
             # --- GLOBAL OVERLAYS (draw AFTER scene so they sit on top) ---
             self.draw_bar(40, 40, 200, 20, self.pet.hunger, "Hunger", (255, 100, 100))
             self.draw_bar(40, 100, 200, 20, self.pet.happiness, "Happiness", (100, 180, 255))
+
+            # Draw Wallet
+            self._draw_coin_hud()
 
             pygame.display.flip()
 
@@ -85,6 +101,10 @@ class Game():
         # label
         text = self.font.render(f"{label}: {int(value * 100)}%", True, (30, 30, 50))
         self.screen.blit(text, (x, y - 22)) # Renders text to screen
+
+    def _draw_coin_hud(self, x=40, y=140):
+        label = self.font.render(f"Coins: {self.wallet.coins}", True, (30,30,50))
+        self.screen.blit(label, (x, y))
 
 if __name__ == "__main__":
     Game().run()
