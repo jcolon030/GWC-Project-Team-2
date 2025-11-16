@@ -379,14 +379,11 @@ class SupermarketScene(Scene):
 class TitleScene(Scene):
     def __init__(self, game):
         super().__init__(game)
-        self.bg = pygame.image.load("assets/ball.png").convert()
+        self.bg = pygame.image.load("assets/title.png").convert()
         self.bg = pygame.transform.scale(self.bg, (SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.title_font = pygame.font.SysFont(None, 72)
         self.button = pygame.Rect(280, 340, 160, 60)
     def draw(self, screen):
         screen.blit(self.bg, (0,0))
-        lbl = self.title_font.render("Virtual Pet", True, (50,60,80))
-        screen.blit(lbl, (180, 140))
         pygame.draw.rect(screen, (180,200,240), self.button, border_radius=12)
         pygame.draw.rect(screen, (60,70,100), self.button, 2, border_radius=12)
         txt = self.font.render("Start", True, (30,40,70))
