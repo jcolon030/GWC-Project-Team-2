@@ -8,7 +8,7 @@ class Ball:
         self.vy = 0.0
         self.bouncing = False
 
-        self.image = pygame.image.load("assets/ball-1.png.png").convert_alpha()
+        self.image = pygame.image.load("assets/ball.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (40,40))
 
         # Track pending happiness reward

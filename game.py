@@ -74,16 +74,8 @@ class Game():
             self.wallet.update(dt)
 
             # --- UPDATE & DRAW via SCENE ---
-            # Let the scene update the pet and draw the room + pet
             self.current.update(dt)
             self.current.draw(self.screen)
-
-            # --- GLOBAL OVERLAYS (draw AFTER scene so they sit on top) ---
-            #self.draw_bar(40, 40, 200, 20, self.pet.hunger, "Hunger", (255, 100, 100))
-            #self.draw_bar(40, 100, 200, 20, self.pet.happiness, "Happiness", (100, 180, 255))
-
-            # Draw Wallet
-            #self._draw_coin_hud()
 
             pygame.display.flip()
 

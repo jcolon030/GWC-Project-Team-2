@@ -6,6 +6,9 @@ class Pet():
         self.name = name
         self.pos = pygame.Vector2(pos)
 
+        self.img = pygame.image.load("assets/cat.png").convert_alpha()
+        self.img = pygame.transform.scale(self.img, (200,200))
+
         # Hunger Variable
         self.max_hunger = 1
         self.hunger = self.max_hunger
@@ -27,7 +30,8 @@ class Pet():
         print(self.hunger)
         print(self.happiness, "\n")
     
-    def draw(self, screen):
+    def draw(self, screen, anchor):
+        '''
         s = pygame.Surface((240, 240), pygame.SRCALPHA)
         body_col = (230, 210, 170)
             
@@ -47,6 +51,8 @@ class Pet():
         # Center the pet sprite onto the main screen
         rect = s.get_rect(center=self.pos)
         screen.blit(s, rect)
+        '''
+        screen.blit(self.img, anchor)
 
     # inside class Pet
     def feed(self, amount: float):

@@ -61,9 +61,26 @@ class Hotbar:
             pygame.draw.rect(self.screen, base_col, draw_rect, border_radius=8)
             pygame.draw.rect(self.screen, (70, 90, 130), draw_rect, width=2, border_radius=8)
 
-            sw = pygame.Rect(draw_rect.x + 8, draw_rect.y + 8, 20, 20)
-            pygame.draw.rect(self.screen, item.color, sw, border_radius=4)
-            pygame.draw.rect(self.screen, (60, 60, 80), sw, width=1, border_radius=4)
+            # Color Swatches in Hotbar
+
+            def load_icon(name, scale=(24,24)):
+                pygame.init()
+                img = pygame.image.load(f"assets/{name}.png").convert_alpha()
+                img = pygame.transform.scale(img, scale)
+                return img
+
+            ITEM_ICONS = {
+                "apple" : load_icon('apple'),
+                "cookie" : load_icon('cookie'),
+                "pizza" : load_icon('pizza'),
+                "ball" : load_icon('ball')
+            }
+
+            icon = ITEM_ICONS.get(item.name.lower())
+            if icon:
+                self.screen.blit(icon, (draw_rect.x + 6, draw_rect.y + 6))
+            else:
+                pygame.draw.rect(self.screen, item.color, (draw_rect.x+8, draw_rect.y+8, 20, 20), border_radius=4)
 
             label = self.small_font.render(item.name, True, (30, 40, 70))
             self.screen.blit(label, (draw_rect.x + 34, draw_rect.y + 6))

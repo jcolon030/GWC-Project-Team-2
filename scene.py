@@ -23,18 +23,13 @@ class Scene:
     def draw(self, screen: pygame.Surface): 
         pass
 
-    def draw_shadow(self, y=SCREEN_HEIGHT//2 + 80, width=300, height=80, alpha=30):
-        s = pygame.Surface((width, height), pygame.SRCALPHA)
-        pygame.draw.ellipse(s, (0,0,0,alpha), (0,0,width,height))
-        self.screen.blit(s, (SCREEN_WIDTH//2 - width//2, y))
-
     # Used for Drawing Room Name and Instructions
-    def _draw_title_right(self, text: str, x_margin=20, y=14, color=(25,35,60)):
+    def _draw_title_right(self, text: str, x_margin=20, y=14, color=(255,255,255)):
         lbl = self.title_font.render(text, True, color)
         rect = lbl.get_rect(topright=(SCREEN_WIDTH - x_margin, y))
         self.screen.blit(lbl, rect)
 
-    def _draw_hint_right(self, text: str, x_margin=20, y=48, color=(40,50,80)):
+    def _draw_hint_right(self, text: str, x_margin=20, y=48, color=(255,255,255)):
         lbl = self.small_font.render(text, True, color)
         rect = lbl.get_rect(topright=(SCREEN_WIDTH - x_margin, y))
         self.screen.blit(lbl, rect)
@@ -42,26 +37,31 @@ class Scene:
     # Used for drawing hunger and happiness
     def draw_bar(self, x, y, w, h, value, label, color):
         value = max(0, min(1, value))
+        bg_block = pygame.Rect(x-2, y-2, w + 5, h + 5)
         bg_rect = pygame.Rect(x, y, w, h)
         inner_rect = pygame.Rect(x + 3, y + 3, int((w - 6) * value), h - 6)
 
         # Draws rectangles to the screen
+        pygame.draw.rect(self.game.screen, (255,255,255), bg_block, border_radius=6)
         pygame.draw.rect(self.game.screen, (60, 60, 80), bg_rect, 2, border_radius=6) # border
         pygame.draw.rect(self.game.screen, color, inner_rect, border_radius=6) # fill
 
         # label
-        text = self.font.render(f"{label}: {int(value * 100)}%", True, (30, 30, 50))
+        text = self.font.render(f"{label}: {int(value * 100)}%", True, (255,255,255))
         self.screen.blit(text, (x, y - 22)) # Renders text to screen
 
     def _draw_coin_hud(self, x=40, y=140):
-        label = self.font.render(f"Coins: {self.game.wallet.coins}", True, (30,30,50))
+        label = self.font.render(f"Coins: {self.game.wallet.coins}", True, (255,255,255))
         self.screen.blit(label, (x, y))
 
 class LivingRoomScene(Scene):
     def __init__(self, game):
         super().__init__(game)
-    
-        self.bg_color = (247, 239, 218)
+
+        self.bg = pygame.image.load("assets/living_room.png").convert()
+        self.bg = pygame.transform.scale(self.bg, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+        self.pet_anchor = (260, 180)
 
         self.toys = [] # should hold toy objects
 
@@ -103,9 +103,8 @@ class LivingRoomScene(Scene):
             t.resolve_rewards(self.game.pet) 
 
     def draw(self, screen):
-        screen.fill(self.bg_color)
-        self.draw_shadow()
-        self.game.pet.draw(screen)
+        screen.blit(self.bg, (0,0))
+        self.game.pet.draw(screen, self.pet_anchor)  
         
         # UI
         self.hotbar.draw()
@@ -122,7 +121,11 @@ class LivingRoomScene(Scene):
 class BathroomScene(Scene):
     def __init__(self, game):
         super().__init__(game)
-        self.bg_color = (220, 240, 255)
+
+        self.pet_anchor = (260, 260)
+
+        self.bg = pygame.image.load("assets/bathroom.png").convert()
+        self.bg = pygame.transform.scale(self.bg, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
         # --- centered shower head ---
         cx = SCREEN_WIDTH // 2
@@ -168,12 +171,11 @@ class BathroomScene(Scene):
 
     # ---------- draw (order: wall → shower → pet → droplets → UI) ----------
     def draw(self, screen: pygame.Surface):
-        screen.fill(self.bg_color)
+        screen.blit(self.bg, (0,0))
         self._draw_shower(screen)
 
         # pet
-        self.draw_shadow(y=SCREEN_HEIGHT//2 + 80, width=320, height=60, alpha=40)
-        self.game.pet.draw(screen)
+        self.game.pet.draw(screen, self.pet_anchor)
 
         # droplets
         self._draw_droplets(screen)
@@ -185,6 +187,7 @@ class BathroomScene(Scene):
         self.draw_bar(40, 40, 200, 20, self.game.pet.hunger, "Hunger", (255, 100, 100))
         self.draw_bar(40, 100, 200, 20, self.game.pet.happiness, "Happiness", (100, 180, 255))
         self._draw_coin_hud()
+
 
     # ---------- droplets ----------
     def _spawn_droplet(self):
@@ -228,11 +231,14 @@ class SupermarketScene(Scene):
         super().__init__(game)
         self.bg_color = (235, 245, 255)
 
+        self.bg = pygame.image.load("assets/shopping.png").convert_alpha()
+        self.bg = pygame.transform.scale(self.bg, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
         # grid layout
         self.card_w, self.card_h = 160, 78
         self.pad = 14
-        self.origin = (36, 280)
-        self.cols = 3
+        self.origin = (20, 280)
+        self.cols = 4
 
         # build static card rects
         self._cards = [] # should contain list[tuple[pygame.Rect, ItemDef]]
@@ -300,6 +306,8 @@ class SupermarketScene(Scene):
     def draw(self, screen: pygame.Surface):
         screen.fill(self.bg_color)
 
+        screen.blit(self.bg, (0,0))
+
         # simple storefront shelving using shapes
         self._draw_shelves(screen)
 
@@ -324,7 +332,7 @@ class SupermarketScene(Scene):
         # 3 horizontal shelves (rounded rectangles)
         shelf_col = (220, 230, 245)
         edge_col  = (70, 90, 130)
-        y = self.origin[1] - 18
+        y = self.origin[1] - 12
         for _ in range(2):
             shelf = pygame.Rect(20, y, SCREEN_WIDTH - 40, 10)
             pygame.draw.rect(screen, shelf_col, shelf, border_radius=6)
@@ -371,7 +379,7 @@ class SupermarketScene(Scene):
 class TitleScene(Scene):
     def __init__(self, game):
         super().__init__(game)
-        self.bg = pygame.image.load("assets/ball-1.png.png").convert()
+        self.bg = pygame.image.load("assets/ball.png").convert()
         self.bg = pygame.transform.scale(self.bg, (SCREEN_WIDTH, SCREEN_HEIGHT))
         self.title_font = pygame.font.SysFont(None, 72)
         self.button = pygame.Rect(280, 340, 160, 60)

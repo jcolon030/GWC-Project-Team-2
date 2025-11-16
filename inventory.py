@@ -1,5 +1,6 @@
 # inventory.py
 from dataclasses import dataclass
+import pygame
 
 @dataclass
 class ItemDef:
@@ -41,3 +42,6 @@ class Inventory:
     
     def give(self, item, n = 1):
         self.counts[item.name] = self.count(item) + n
+
+
+
