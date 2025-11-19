@@ -14,8 +14,10 @@ APPLE  = ItemDef("Apple",  nutrition=0.20, color=(250,120,120), price=3, kind='f
 COOKIE = ItemDef("Cookie", nutrition=0.12, color=(230,190,120), price=2, kind='food')
 PIZZA  = ItemDef("Pizza", nutrition=0.3, color=(255,180,180), price=5, kind='food')
 BALL   = ItemDef("Ball", nutrition=0.0, color=(255,120,120), price=5, kind='toy')
+TEST   = ItemDef("Test1", nutrition=0.0, color=(200,200,200), price=1, kind="food")
+TEST1   = ItemDef("Test2", nutrition=0.0, color=(200,200,200), price=1, kind="food")
 
-ITEMS = [APPLE, COOKIE, PIZZA, BALL]  # order in the hotbar
+ITEMS = [APPLE, COOKIE, PIZZA, BALL, TEST, TEST1]  # order in the hotbar
 
 class Inventory:
     def __init__(self):
@@ -24,7 +26,9 @@ class Inventory:
                        APPLE.name: 3, 
                        COOKIE.name: 5,
                        PIZZA.name: 2,
-                       BALL.name: 2}
+                       BALL.name: 2,
+                       TEST.name: 2,
+                       TEST1.name: 2}
         
     def count(self, item):
         return self.counts.get(item.name, 0)

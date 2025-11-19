@@ -1,7 +1,7 @@
 import pygame
 from inventory import Inventory, ITEMS, ItemDef
-from ui import Hotbar
 from toys import Ball
+from ui import Hotbar
 
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 480
@@ -358,7 +358,7 @@ class SupermarketScene(Scene):
 
             # name / price / stock
             name_lbl  = self.font.render(item.name, True, (30,40,70))
-            price_lbl = self.small_font.render(f"🪙 {item.price}", True, (40,60,90))
+            price_lbl = self.small_font.render(f"${item.price}", True, (40,60,90))
             stock_lbl = self.small_font.render(f"Stock: {stock}", True, (50,60,90))
 
             screen.blit(name_lbl,  (card_rect.x + 48, card_rect.y + 8))
