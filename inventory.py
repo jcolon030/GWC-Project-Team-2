@@ -43,5 +43,7 @@ class Inventory:
     def give(self, item, n = 1):
         self.counts[item.name] = self.count(item) + n
 
+    def clear(self):
+        self.counts.clear()
 
 

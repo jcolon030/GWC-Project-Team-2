@@ -379,15 +379,47 @@ class SupermarketScene(Scene):
 class TitleScene(Scene):
     def __init__(self, game):
         super().__init__(game)
+
+        # background
         self.bg = pygame.image.load("assets/title.png").convert()
         self.bg = pygame.transform.scale(self.bg, (SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.button = pygame.Rect(280, 340, 160, 60)
-    def draw(self, screen):
-        screen.blit(self.bg, (0,0))
-        pygame.draw.rect(screen, (180,200,240), self.button, border_radius=12)
-        pygame.draw.rect(screen, (60,70,100), self.button, 2, border_radius=12)
-        txt = self.font.render("Start", True, (30,40,70))
-        screen.blit(txt, txt.get_rect(center=self.button.center))
+
+        # button
+        self.btn = pygame.Rect(0, 0, 180, 55)
+        self.btn.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT - 120)
+
+        # colors
+        self.btn_normal = (246, 232, 177)   # cream
+        self.btn_hover  = (249, 243, 210)   # lighter cream
+        self.btn_border = (107, 93, 71)
+        self.text_col   = (50, 40, 30)
+
     def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN and self.button.collidepoint(event.pos):
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.btn.collidepoint(event.pos):
+                self.game.change_scene("living")
+                self.game.time_scale = 1.0
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
             self.game.change_scene("living")
+            self.game.time_scale = 1.0
+
+    def draw(self, screen):
+        screen.blit(self.bg, (0, 0))
+
+        # button hover check
+        mx, my = pygame.mouse.get_pos()
+        hovered = self.btn.collidepoint((mx, my))
+        color = self.btn_hover if hovered else self.btn_normal
+
+        # draw button
+        pygame.draw.rect(screen, color, self.btn, border_radius=12)
+        pygame.draw.rect(screen, self.btn_border, self.btn, 2, border_radius=12)
+
+        # text
+        if self.game.continued == 0:
+            lbl = self.font.render("Start", True, self.text_col)
+            screen.blit(lbl, lbl.get_rect(center=self.btn.center))
+        else:
+            lbl = self.font.render("Continue", True, self.text_col)
+            screen.blit(lbl, lbl.get_rect(center=self.btn.center))
+
