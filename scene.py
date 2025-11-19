@@ -68,7 +68,7 @@ class LivingRoomScene(Scene):
         self.hotbar = Hotbar(
             inventory=self.game.inv,
             items=ITEMS,
-            origin=(20, SCREEN_HEIGHT - 64),
+            origin=(40, SCREEN_HEIGHT - 64),
             slot_w=85, slot_h=44, pad=10,
             font=self.font, small_font=self.small_font, screen=self.screen,
             on_click_item=self._on_click_item
@@ -126,6 +126,9 @@ class BathroomScene(Scene):
 
         self.bg = pygame.image.load("assets/bathroom.png").convert()
         self.bg = pygame.transform.scale(self.bg, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+        self.shower_img = pygame.image.load("assets/shower_head.png").convert_alpha()
+        self.shower_img = pygame.transform.scale(self.shower_img, (90, 90))
 
         # --- centered shower head ---
         cx = SCREEN_WIDTH // 2
@@ -198,21 +201,33 @@ class BathroomScene(Scene):
         self.droplets.append({"x": x, "y": y, "vy": vy})
 
     def _update_droplets(self, dt: float):
+        # get the pet rect for collision (use same anchor as draw)
+        pet_rect = self.game.pet.get_rect(center=self.pet_anchor)
+
         alive = []
         for d in self.droplets:
             d["y"] += d["vy"] * dt
-            if d["y"] < SCREEN_HEIGHT - 20:  # drop off-screen cleanup
+
+            pos = (d["x"], d["y"])
+
+            # if droplet hits pet, "remove" it by NOT appending
+            if pet_rect.collidepoint(pos):
+                # optional: tiny extra happiness bump per hit
+                # self.game.pet.happiness = min(1.0, self.game.pet.happiness + 0.001)
+                continue
+
+            # if still on-screen, keep it
+            if d["y"] < SCREEN_HEIGHT - 160:
                 alive.append(d)
+
         self.droplets = alive
+
 
     # ---------- draw pieces ----------
     def _draw_shower(self, screen):
-        arm_col = (90, 110, 140)
-        pygame.draw.line(screen, arm_col, self.arm_start, (self.head_rect.left, self.head_rect.centery), 6)
-        pygame.draw.rect(screen, (200, 210, 230), self.head_rect, border_radius=8)
-        pygame.draw.rect(screen, (80, 90, 110), self.head_rect, width=2, border_radius=8)
-        pygame.draw.rect(screen, (190, 200, 210), self.handle_rect, border_radius=4)
-        pygame.draw.rect(screen, (80, 90, 110), self.handle_rect, width=2, border_radius=4)
+        
+        screen.blit(self.shower_img, self.head_rect)
+
 
     def _draw_droplets(self, screen):
         for d in self.droplets:

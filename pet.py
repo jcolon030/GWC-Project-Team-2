@@ -31,32 +31,23 @@ class Pet():
         print(self.happiness, "\n")
     
     def draw(self, screen, anchor):
-        '''
-        s = pygame.Surface((240, 240), pygame.SRCALPHA)
-        body_col = (230, 210, 170)
-            
-        # Body + ears
-        pygame.draw.ellipse(s, body_col, (10, 30, 220, 200))
-        pygame.draw.polygon(s, body_col, [(50, 50),(80,10),(110,50)])
-        pygame.draw.polygon(s, body_col, [(130, 50),(160,10),(190,50)])
-
-        # Eyes
-        eye = (30,30,40)
-        pygame.draw.circle(s, eye, (90, 120), 8)
-        pygame.draw.circle(s, eye, (160,120), 8)
-
-        cx, cy = 125, 155
-        pygame.draw.arc(s, eye, (cx-20, cy-8, 40, 24), math.radians(160),  math.radians(20), 3)
-
-        # Center the pet sprite onto the main screen
-        rect = s.get_rect(center=self.pos)
-        screen.blit(s, rect)
-        '''
         screen.blit(self.img, anchor)
 
     # inside class Pet
     def feed(self, amount: float):
         self.hunger = min(1.0, self.hunger + float(amount))
+
+    def get_rect(self, center=None) -> pygame.Rect:
+        """
+        Returns the rect used when drawing the pet.
+        Use the same center you pass to draw().
+        """
+        cx, cy = center if center is not None else (self.pos.x, self.pos.y)
+        rect = self.img.get_rect()
+        rect.center = (int(cx), int(cy))
+        return rect
+
+
 
 
     

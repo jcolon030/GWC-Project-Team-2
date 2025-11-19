@@ -15,7 +15,7 @@ SAVE_PATH = Path("savegame.json")
 class Game():
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption("Our Pet Game")
+        pygame.display.set_caption("Pocket Pet")
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
 
@@ -40,7 +40,8 @@ class Game():
         }
 
         self.current_title = "title"
-        self.current = self.scenes[self.current_title] # self.current is a Scene class
+        self.current = self.scenes[self.current_title] # self.current is a Scene class, self.scenes['title']
+
         self.time_scale = 0.0 # Used to "pause" game
         self.continued = 0 # is "0" if this is first time game is being ran
 
@@ -51,14 +52,14 @@ class Game():
 
     def change_scene(self, name):
         if name in self.scenes:
-            self.current = self.scenes[name]
+            self.current = self.scenes[name] 
             self.current_title = name
 
     def run(self):
         running = True
         while running:
             raw_dt = self.clock.tick(FPS) / 1000
-            dt = raw_dt * self.time_scale
+            dt = raw_dt * self.time_scale # 0
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

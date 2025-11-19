@@ -79,14 +79,14 @@ class Hotbar:
         pygame.draw.rect(self.screen, (70, 90, 130), strip, width=2, border_radius=10)
 
         # build slots for visible slice
-        self._slots = []
-        for i, item in enumerate(visible):
+        self._slots = [] # (Rect, Item)
+        for i, item in enumerate(visible): # visible = ITEMS; [1, Apple; 2, Banana; ]
             x = x0 + i * (self.slot_w + self.pad)
             rect = pygame.Rect(x, y0, self.slot_w, self.slot_h)
             self._slots.append((rect, item))
 
         # draw each visible slot
-        for i, (rect, item) in enumerate(self._slots):
+        for i, (rect, item) in enumerate(self._slots): # [1, (Rect, Apple); 2, (Rect, Banana)]
             draw_rect = rect.inflate(8, 6) if i == self._hover_i else rect
             has_any = self.inv.count(item) > 0
             base_col = (245, 245, 250) if has_any else (230, 230, 235)
@@ -142,7 +142,7 @@ class Hotbar:
             return
 
         # left arrow to the left of hotbar
-        self.left_arrow = pygame.Rect(x0 - 28, y0 + 8, 20, 28)
+        self.left_arrow = pygame.Rect(x0 - 33, y0 + 8, 20, 28)
         pygame.draw.rect(self.screen, (230, 230, 240), self.left_arrow, border_radius=4)
         pygame.draw.rect(self.screen, (70, 70, 90), self.left_arrow, 1, border_radius=4)
         la = self.small_font.render("<", True, (50, 50, 70))
