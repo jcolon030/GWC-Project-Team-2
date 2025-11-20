@@ -32,6 +32,14 @@ class Hotbar:
         self._slots = []   # [(Rect, ItemDef), ...] for VISIBLE slice only
         self._hover_i = None
 
+        self.ITEM_ICONS = {
+                "apple" : self._load_icon('apple'),
+                "berry": self._load_icon("strawberry"),
+                "cookie" : self._load_icon('cookie'),
+                "pizza" : self._load_icon('pizza'),
+                "ball" : self._load_icon('ball')
+        }
+
         # arrow buttons (computed in draw, but keep rects here for clicks)
         self.left_arrow = None
         self.right_arrow = None
@@ -94,20 +102,8 @@ class Hotbar:
             pygame.draw.rect(self.screen, base_col, draw_rect, border_radius=8)
             pygame.draw.rect(self.screen, (70, 90, 130), draw_rect, width=2, border_radius=8)
 
-            def load_icon(name, scale=(24,24)):
-                img = pygame.image.load(f"assets/{name}.png").convert_alpha()
-                img = pygame.transform.scale(img, scale)
-                return img
-
-            ITEM_ICONS = {
-                "apple" : load_icon('apple'),
-                "cookie" : load_icon('cookie'),
-                "pizza" : load_icon('pizza'),
-                "ball" : load_icon('ball')
-            }
-
             # icon
-            icon = ITEM_ICONS.get(item.name.lower())
+            icon = self.ITEM_ICONS.get(item.name.lower())
             if icon:
                 self.screen.blit(icon, (draw_rect.x + 6, draw_rect.y + 6))
             else:
@@ -130,6 +126,11 @@ class Hotbar:
 
         # draw arrows if needed
         self._draw_arrows()
+
+    def _load_icon(self, name, scale=(24,24)):
+                img = pygame.image.load(f"assets/{name}.png").convert_alpha()
+                img = pygame.transform.scale(img, scale)
+                return img
 
     # ---------- arrows ----------
     def _draw_arrows(self):

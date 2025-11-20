@@ -264,6 +264,19 @@ class SupermarketScene(Scene):
         self._flash_timer = 0.0
         self._flash_color = (30, 40, 70)
 
+        self.ITEM_ICONS = {
+            "apple" : self._load_icon('apple'),
+            "berry": self._load_icon("strawberry"),
+            "cookie" : self._load_icon('cookie'),
+            "pizza" : self._load_icon('pizza'),
+            "ball" : self._load_icon('ball')
+        }
+
+    def _load_icon(self, name, scale=(36,36)):
+            img = pygame.image.load(f"assets/{name}.png").convert_alpha()
+            img = pygame.transform.scale(img, scale)
+            return img
+    
     # ---------- layout ----------
     def _build_grid(self):
         self._cards.clear()
@@ -360,10 +373,12 @@ class SupermarketScene(Scene):
             pygame.draw.rect(screen, bg_col, card_rect, border_radius=10)
             pygame.draw.rect(screen, (70, 90, 130), card_rect, width=2, border_radius=10)
 
-            # color swatch “product”
-            sw = pygame.Rect(card_rect.x + 10, card_rect.y + 12, 28, 28)
-            pygame.draw.rect(screen, item.color, sw, border_radius=6)
-            pygame.draw.rect(screen, (60, 60, 80), sw, width=2, border_radius=6)
+            # icon
+            icon = self.ITEM_ICONS.get(item.name.lower())
+            if icon:
+                self.screen.blit(icon, (card_rect.x + 6, card_rect.y + 6))
+            else:
+                pygame.draw.rect(self.screen, item.color, (card_rect.x+8, card_rect.y+8, 20, 20), border_radius=4)
 
             # name / price / stock
             name_lbl  = self.font.render(item.name, True, (30,40,70))

@@ -11,17 +11,19 @@ class ItemDef:
     kind: str = "food" # Can either be food or toy
 
 APPLE  = ItemDef("Apple",  nutrition=0.20, color=(250,120,120), price=3, kind='food')
+BERRY = ItemDef("Berry", nutrition=0.20, color=(255, 0, 0), price=3, kind='food')
 COOKIE = ItemDef("Cookie", nutrition=0.12, color=(230,190,120), price=2, kind='food')
 PIZZA  = ItemDef("Pizza", nutrition=0.3, color=(255,180,180), price=5, kind='food')
 BALL   = ItemDef("Ball", nutrition=0.0, color=(255,120,120), price=5, kind='toy')
 
-ITEMS = [APPLE, COOKIE, PIZZA, BALL]  # order in the hotbar
+ITEMS = [APPLE, BERRY, COOKIE, PIZZA, BALL]  # order in the hotbar
 
 class Inventory:
     def __init__(self):
         # starting amounts (tweak as you like)
         self.counts = {
                        APPLE.name: 3, 
+                       BERRY.name: 3,
                        COOKIE.name: 5,
                        PIZZA.name: 2,
                        BALL.name: 2} # {"Apple": 3}
