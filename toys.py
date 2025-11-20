@@ -13,7 +13,7 @@ class Ball:
 
         # Track pending happiness reward
         self._happy_pending = False
-        self._happy_boost = 0.003  # small boost per click (~0.3%)
+        self._happy_boost = 0.003  # small boost per click (0.3%)
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:

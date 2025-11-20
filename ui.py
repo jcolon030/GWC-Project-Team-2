@@ -13,7 +13,7 @@ class Hotbar:
         small_font=None,
         screen=None,
         on_click_item=None,
-        max_visible=4
+        max_visible=3
     ):
         self.inv = inventory
         self.items = items

@@ -61,7 +61,7 @@ class LivingRoomScene(Scene):
         self.bg = pygame.image.load("assets/living_room.png").convert()
         self.bg = pygame.transform.scale(self.bg, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-        self.pet_anchor = (260, 180)
+        self.pet_anchor = (390, 290)
 
         self.toys = [] # should hold toy objects
 
@@ -83,8 +83,8 @@ class LivingRoomScene(Scene):
 
         elif item.kind == "toy":
             if self.game.inv.consume(item):
-                x = 260 + 40 * (len(self.toys) % 5)
-                self.toys.append(Ball(item=item, pos=(x, 360)))
+                x = 300 + 40 * (len(self.toys) % 5)
+                self.toys.append(Ball(item=item, pos=(x, 350)))
 
 
     def handle_event(self, event):
@@ -122,28 +122,25 @@ class BathroomScene(Scene):
     def __init__(self, game):
         super().__init__(game)
 
-        self.pet_anchor = (260, 260)
+        self.pet_anchor = (360, 360)
 
         self.bg = pygame.image.load("assets/bathroom.png").convert()
         self.bg = pygame.transform.scale(self.bg, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
         self.shower_img = pygame.image.load("assets/shower_head.png").convert_alpha()
-        self.shower_img = pygame.transform.scale(self.shower_img, (90, 90))
+        self.shower_img = pygame.transform.scale(self.shower_img, (120, 120))
 
         # --- centered shower head ---
         cx = SCREEN_WIDTH // 2
         self.head_rect = pygame.Rect(0, 0, 40, 26)      # shower head
-        self.head_rect.center = (cx, 92)
-        self.arm_start = (cx - 120, 80)                 # arm comes in from left
-        self.handle_rect = pygame.Rect(0, 0, 10, 18)    # little knob on right side
-        self.handle_rect.midleft = (self.head_rect.right + 6, self.head_rect.centery)
+        self.head_rect.center = (cx - 68, 100)
 
         # droplet spawn origin (center-bottom of head)
-        self.nozzle_center = (self.head_rect.centerx, self.head_rect.bottom - 2)
+        self.nozzle_center = (cx - 10, self.head_rect.bottom)
 
         # --- Shower button (toggle ON/OFF) ---
         self.spraying = False
-        self.shower_btn = pygame.Rect(20, 170, 110, 36)
+        self.shower_btn = pygame.Rect(37, 170, 110, 36)
 
         # --- droplets (visual only) ---
         self.droplets = []            # list of dict(x, y, vy)
@@ -175,10 +172,14 @@ class BathroomScene(Scene):
     # ---------- draw (order: wall → shower → pet → droplets → UI) ----------
     def draw(self, screen: pygame.Surface):
         screen.blit(self.bg, (0,0))
-        self._draw_shower(screen)
+        
+        self._draw_shower_button(screen)
 
         # pet
         self.game.pet.draw(screen, self.pet_anchor)
+
+        # shower head
+        screen.blit(self.shower_img, self.head_rect)
 
         # droplets
         self._draw_droplets(screen)
@@ -186,7 +187,6 @@ class BathroomScene(Scene):
         # UI
         self._draw_title_right("Bathroom")
         self._draw_hint_right("Toggle the Shower button to spray")
-        self._draw_shower_button(screen)
         self.draw_bar(40, 40, 200, 20, self.game.pet.hunger, "Hunger", (255, 100, 100))
         self.draw_bar(40, 100, 200, 20, self.game.pet.happiness, "Happiness", (100, 180, 255))
         self._draw_coin_hud()
@@ -195,14 +195,15 @@ class BathroomScene(Scene):
     # ---------- droplets ----------
     def _spawn_droplet(self):
         import random
-        x = self.nozzle_center[0] + random.uniform(-5, 5)
-        y = self.nozzle_center[1] + random.uniform(-2, 2)
+        x = self.nozzle_center[0] + random.uniform(-10, 10)
+        y = self.nozzle_center[1] + random.uniform(-3, 3)
         vy = random.uniform(300, 380)
         self.droplets.append({"x": x, "y": y, "vy": vy})
 
     def _update_droplets(self, dt: float):
         # get the pet rect for collision (use same anchor as draw)
         pet_rect = self.game.pet.get_rect(center=self.pet_anchor)
+        pet_rect.y += 30
 
         alive = []
         for d in self.droplets:
@@ -212,23 +213,16 @@ class BathroomScene(Scene):
 
             # if droplet hits pet, "remove" it by NOT appending
             if pet_rect.collidepoint(pos):
-                # optional: tiny extra happiness bump per hit
-                # self.game.pet.happiness = min(1.0, self.game.pet.happiness + 0.001)
                 continue
 
             # if still on-screen, keep it
-            if d["y"] < SCREEN_HEIGHT - 160:
+            if d["y"] < SCREEN_HEIGHT + 160:
                 alive.append(d)
 
         self.droplets = alive
 
 
     # ---------- draw pieces ----------
-    def _draw_shower(self, screen):
-        
-        screen.blit(self.shower_img, self.head_rect)
-
-
     def _draw_droplets(self, screen):
         for d in self.droplets:
             pygame.draw.circle(screen, (150, 190, 255), (int(d["x"]), int(d["y"])), 3)
@@ -401,7 +395,7 @@ class TitleScene(Scene):
 
         # button
         self.btn = pygame.Rect(0, 0, 180, 55)
-        self.btn.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT - 120)
+        self.btn.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT - 100)
 
         # colors
         self.btn_normal = (246, 232, 177)   # cream

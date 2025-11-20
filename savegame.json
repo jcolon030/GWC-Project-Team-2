@@ -1,1 +1,1 @@
-{"pet": {"hunger": 0.9790900000000329, "happiness": 0.9790900000000329}, "wallet": {"coins": 11}, "inventory": {"Apple": 3, "Cookie": 5, "Pizza": 2, "Ball": 2, "Test1": 2, "Test2": 2}, "scene": "title"}
+{"pet": {"hunger": 0.0, "happiness": 0.0}, "wallet": {"coins": 406}, "inventory": {"Apple": 3, "Cookie": 5, "Pizza": 2, "Ball": 0}, "scene": "title"}

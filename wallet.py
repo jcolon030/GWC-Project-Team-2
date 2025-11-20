@@ -1,5 +1,5 @@
 class Wallet:
-    def __init__(self, start_coins: int = 10, income_every: float = 5.0, income_amount: int = 1):
+    def __init__(self, start_coins: int = 10, income_every: float = 10.0, income_amount: int = 1):
         self.coins = start_coins
         self.income_every = income_every
         self.income_amount = income_amount

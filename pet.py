@@ -31,20 +31,20 @@ class Pet():
         print(self.happiness, "\n")
     
     def draw(self, screen, anchor):
-        screen.blit(self.img, anchor)
+        rect = self.img.get_rect()
+        rect.center = (int(anchor[0]), int(anchor[1]))
+        screen.blit(self.img, rect)
 
-    # inside class Pet
     def feed(self, amount: float):
         self.hunger = min(1.0, self.hunger + float(amount))
 
     def get_rect(self, center=None) -> pygame.Rect:
-        """
-        Returns the rect used when drawing the pet.
-        Use the same center you pass to draw().
-        """
-        cx, cy = center if center is not None else (self.pos.x, self.pos.y)
+        """Return the same rect used in draw()."""
+        if center is None:
+            center = (self.pos.x, self.pos.y)
+
         rect = self.img.get_rect()
-        rect.center = (int(cx), int(cy))
+        rect.center = (int(center[0]), int(center[1]))
         return rect
 
 

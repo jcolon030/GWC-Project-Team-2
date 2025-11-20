@@ -98,7 +98,6 @@ class Game():
         pygame.quit()
 
     # --------- Save Functions ------------
-
     def save_state(self):
         data = {
             "pet": {
