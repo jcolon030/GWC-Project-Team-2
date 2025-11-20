@@ -1,10 +1,11 @@
 import pygame
+from inventory import ItemDef, Inventory
 
 class Hotbar:
     def __init__(
         self,
-        inventory,
-        items,
+        inventory: Inventory,
+        items: ItemDef,
         origin=(20, 0),
         slot_w=85,
         slot_h=44,

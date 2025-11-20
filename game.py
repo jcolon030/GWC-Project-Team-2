@@ -14,10 +14,16 @@ SAVE_PATH = Path("savegame.json")
 
 class Game():
     def __init__(self):
-        pygame.init()
+        pygame.init() # Initializes all pygame modules
+
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT)) # Screen Initilization
+
+        # Window Customization
+        self.icon_img = pygame.image.load("assets/cat.png").convert_alpha()
+        pygame.display.set_icon(self.icon_img)
         pygame.display.set_caption("Pocket Pet")
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.clock = pygame.time.Clock()
+
+        self.clock = pygame.time.Clock() # Clock Init
 
         # Fonts
         self.title_font = pygame.font.SysFont(None, 36)
@@ -31,7 +37,7 @@ class Game():
         self.inv = Inventory()
         self.wallet = Wallet( start_coins=10, income_every=5.0, income_amount=1 )
 
-        # Scene manager
+        # Availiable Scenes
         self.scenes = {
             "living": LivingRoomScene(self),
             "bathroom": BathroomScene(self),
@@ -39,39 +45,39 @@ class Game():
             "title" : TitleScene(self)
         }
 
+        # Holds current scene and title
         self.current_title = "title"
         self.current = self.scenes[self.current_title] # self.current is a Scene class, self.scenes['title']
 
         self.time_scale = 0.0 # Used to "pause" game
         self.continued = 0 # is "0" if this is first time game is being ran
 
+        # Looks for save file
         save_check = self.load_state()
-
         if save_check:
-            self.continued = 1
+            self.continued = 1 # if save file exists
 
+    # Used to change between scenes
     def change_scene(self, name):
         if name in self.scenes:
             self.current = self.scenes[name] 
             self.current_title = name
 
+    # Main Game Loop
     def run(self):
         running = True
         while running:
             raw_dt = self.clock.tick(FPS) / 1000
             dt = raw_dt * self.time_scale # 0
 
+            # Keeps track of events
             for event in pygame.event.get():
+                # if "X" button is clicked
                 if event.type == pygame.QUIT:
                     running = False
 
+                # if keyboard key is pressed
                 elif event.type == pygame.KEYDOWN:
-                    # record key for on-screen debug
-                    try:
-                        self._last_key = f"KEYDOWN: {pygame.key.name(event.key)}"
-                    except Exception:
-                        self._last_key = f"KEYDOWN: {event.key}"
-
                     if event.key == pygame.K_ESCAPE:
                         running = False
                     elif event.key == pygame.K_b:
@@ -94,11 +100,13 @@ class Game():
 
             pygame.display.flip()
 
+        # Save game before exiting program
         self.save_state()
         pygame.quit()
 
     # --------- Save Functions ------------
     def save_state(self):
+        # Holds game data as a dictionary (json)
         data = {
             "pet": {
                 "hunger": self.pet.hunger,
@@ -113,7 +121,8 @@ class Game():
             },
             "scene": "title",
         }
-
+        
+        # Creates a save file ("savegame.json")
         try:
             with open(SAVE_PATH, "w") as f:
                 json.dump(data, f)
@@ -122,10 +131,12 @@ class Game():
             print("Failed to save:", e)
 
     def load_state(self):
+        # Checks for existing save data
         if not SAVE_PATH.exists():
             print("No save file yet, starting fresh.")
             return
 
+        # Attempts to read saved data
         try:
             with open(SAVE_PATH, "r") as f:
                 data = json.load(f)
@@ -159,7 +170,7 @@ class Game():
             self.current = self.scenes[scene_name]
 
         print("Loaded save.")
-        return True
+        return True # Lets us know save file was pulled successfully
 
 if __name__ == "__main__":
     Game().run()

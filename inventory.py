@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 import pygame
 
+# Define a new data class for game items
 @dataclass
 class ItemDef:
     name: str
@@ -28,7 +29,7 @@ class Inventory:
                        PIZZA.name: 2,
                        BALL.name: 2} # {"Apple": 3}
         
-    def count(self, item):
+    def count(self, item: ItemDef) -> int:
         return self.counts.get(item.name, 0)
 
     def can_take(self, item: ItemDef) -> bool:
@@ -42,7 +43,7 @@ class Inventory:
             return True 
         return False
     
-    def give(self, item, n = 1): # give("Apple") -> give("Apple", 1)
+    def give(self, item: ItemDef, n = 1): # give("Apple") -> give("Apple", 1)
         self.counts[item.name] = self.count(item) + n
 
     def clear(self):

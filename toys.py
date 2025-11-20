@@ -1,11 +1,12 @@
 import pygame
+from inventory import ItemDef
 
 class Ball:
-    def __init__(self, item, pos=(200, 360), radius=20):
+    def __init__(self, item: ItemDef, pos=(200, 360), radius=20):
         self.item = item
         self.pos = pygame.Vector2(pos)
         self.radius = radius
-        self.vy = 0.0
+        self.vy = 0.0 # y-axis velocity
         self.bouncing = False
 
         self.image = pygame.image.load("assets/ball.png").convert_alpha()
@@ -17,14 +18,14 @@ class Ball:
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            mx, my = event.pos
+            mx, my = event.pos # mouse coordinates
             # detect click inside circle
             if (mx - self.pos.x)**2 + (my - self.pos.y)**2 <= self.radius**2:
                 self.bouncing = True
                 self.vy = -260
                 self._happy_pending = True  # give reward once per click
 
-    def update(self, dt):
+    def update(self, dt: float):
         if not self.bouncing:
             return
 
@@ -43,8 +44,5 @@ class Ball:
             self._happy_pending = False
 
     def draw(self, screen):
-        #pygame.draw.circle(screen, self.item.color, (int(self.pos.x), int(self.pos.y)), self.radius)
-        #pygame.draw.circle(screen, (60, 60, 80), (int(self.pos.x), int(self.pos.y)), self.radius, 2)
-
         rect = self.image.get_rect(center=(int(self.pos.x), int(self.pos.y)))
         screen.blit(self.image, rect)

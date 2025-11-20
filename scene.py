@@ -6,6 +6,7 @@ from ui import Hotbar
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 480
 
+# Parent Class, used to hold data persistent across all the child scenes
 class Scene:
     def __init__(self, game):
         self.game = game

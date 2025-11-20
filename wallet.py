@@ -19,7 +19,7 @@ class Wallet:
         self.coins += int(amount)
 
     def update(self, dt):
-        """Passive income every `income_every` seconds."""
+        # Passive income every `income_every` seconds.
         self._timer += dt
         while self._timer >= self.income_every:
             self._timer -= self.income_every
