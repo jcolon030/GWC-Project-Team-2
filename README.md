@@ -51,7 +51,7 @@ It teaches key Pygame concepts:
 - Clean and readable code  
 - Modular and beginner-friendly  
 - Easy to extend with new ideas  
-
+ 
 ### 🛠 Highly Customizable
 - Replace sprites in the `assets/` folder  
 - Add new items, prices, animations  
